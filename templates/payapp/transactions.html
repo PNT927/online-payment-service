@@ -1,0 +1,303 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Transactions
+{% endblock %}
+
+{% block content %}
+    <div>
+        <h1 class="mb-4">Your Transactions</h1>
+
+        <p class="text-light">
+            View your payment history and manage payment requests.
+        </p>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+
+            <form method="get" class="row g-3 align-items-end">
+
+                <div class="col-md-4">
+                    <label class="form-label">Search by email</label>
+
+                    <input
+                            type="text"
+                            name="search"
+                            value="{{ search_query }}"
+                            class="form-control"
+                            placeholder="example@email.com"
+                    >
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Show</label>
+
+                    <select name="type" class="form-select">
+                        <option value="all" {% if transaction_filter == "all" %}selected{% endif %}>
+                            All
+                        </option>
+
+                        <option value="sent" {% if transaction_filter == "sent" %}selected{% endif %}>
+                            Sent
+                        </option>
+
+                        <option value="received" {% if transaction_filter == "received" %}selected{% endif %}>
+                            Received
+                        </option>
+
+                        <option value="requests" {% if transaction_filter == "requests" %}selected{% endif %}>
+                            Requests
+                        </option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Request status</label>
+
+                    <select name="status" class="form-select">
+
+                        <option value="all" {% if status_filter == "all" %}selected{% endif %}>
+                            All
+                        </option>
+
+                        <option value="PENDING" {% if status_filter == "PENDING" %}selected{% endif %}>
+                            Pending
+                        </option>
+
+                        <option value="ACCEPTED" {% if status_filter == "ACCEPTED" %}selected{% endif %}>
+                            Accepted
+                        </option>
+
+                        <option value="REJECTED" {% if status_filter == "REJECTED" %}selected{% endif %}>
+                            Rejected
+                        </option>
+
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        Filter
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-6">
+
+            {% if transaction_filter == "all" or transaction_filter == "sent" %}
+
+                <div class="card mb-4">
+                    <div class="card-body">
+
+                        <h3 class="section-title">Sent Payments</h3>
+
+                        {% if sent_transactions %}
+
+                            <ul class="list-group shadow-sm rounded-4 overflow-hidden">
+
+                                {% for t in sent_transactions %}
+
+                                    <li class="list-group-item">
+
+                                        <div class="fw-semibold">
+                                            To {{ t.recipient.email }}
+                                        </div>
+
+                                        <div>
+                                            {{ t.amount_sent }} {{ t.sender_currency }}
+                                        </div>
+
+                                        <small class="d-block">
+                                            {{ t.created_at }}
+                                        </small>
+
+                                    </li>
+
+                                {% endfor %}
+
+                            </ul>
+
+                        {% else %}
+
+                            <p>No sent payments.</p>
+
+                        {% endif %}
+
+                    </div>
+                </div>
+
+            {% endif %}
+
+            {% if transaction_filter == "all" or transaction_filter == "requests" %}
+
+                <div class="card">
+                    <div class="card-body">
+
+                        <h3 class="section-title">Payment Requests Made</h3>
+
+                        {% if requests_made %}
+
+                            <ul class="list-group shadow-sm rounded-4 overflow-hidden">
+
+                                {% for r in requests_made %}
+
+                                    <li class="list-group-item">
+
+                                        <div class="fw-semibold">
+                                            {{ r.target_user.email }}
+                                        </div>
+
+                                        <div>
+                                            Requested {{ r.amount }} {{ r.currency }}
+                                        </div>
+
+                                        <small>
+                                            Status: {{ r.status }}
+                                        </small>
+
+                                    </li>
+
+                                {% endfor %}
+
+                            </ul>
+
+                        {% else %}
+
+                            <p>No payment requests made.</p>
+
+                        {% endif %}
+
+                    </div>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+        <div class="col-lg-6">
+
+            {% if transaction_filter == "all" or transaction_filter == "received" %}
+
+                <div class="card mb-4">
+                    <div class="card-body">
+
+                        <h3 class="section-title">Received Payments</h3>
+
+                        {% if received_transactions %}
+
+                            <ul class="list-group shadow-sm rounded-4 overflow-hidden">
+
+                                {% for t in received_transactions %}
+
+                                    <li class="list-group-item">
+
+                                        <div class="fw-semibold">
+                                            From {{ t.sender.email }}
+                                        </div>
+
+                                        <div>
+                                            {{ t.amount_received }} {{ t.recipient_currency }}
+                                        </div>
+
+                                        <small class="d-block">
+                                            {{ t.created_at }}
+                                        </small>
+
+                                    </li>
+
+                                {% endfor %}
+
+                            </ul>
+
+                        {% else %}
+
+                            <p>No received payments.</p>
+
+                        {% endif %}
+
+                    </div>
+                </div>
+
+            {% endif %}
+
+            {% if transaction_filter == "all" or transaction_filter == "requests" %}
+
+                <div class="card">
+                    <div class="card-body">
+
+                        <h3 class="section-title">Payment Requests Received</h3>
+
+                        {% if requests_received %}
+
+                            <ul class="list-group shadow-sm rounded-4 overflow-hidden">
+
+                                {% for r in requests_received %}
+
+                                    <li class="list-group-item">
+
+                                        <div class="fw-semibold mb-2">
+                                            {{ r.requester.email }}
+                                        </div>
+
+                                        <div class="mb-2">
+                                            Requested {{ r.amount }} {{ r.currency }}
+                                        </div>
+
+                                        <small class="d-block mb-3">
+                                            Status: {{ r.status }}
+                                        </small>
+
+                                        {% if r.status == "PENDING" %}
+
+                                            <div class="d-flex gap-2">
+
+                                                <a
+                                                        href="/requests/{{ r.id }}/accept/"
+                                                        class="btn btn-success btn-sm"
+                                                >
+                                                    Accept
+                                                </a>
+
+                                                <a
+                                                        href="/requests/{{ r.id }}/reject/"
+                                                        class="btn btn-danger btn-sm"
+                                                >
+                                                    Reject
+                                                </a>
+
+                                            </div>
+
+                                        {% endif %}
+
+                                    </li>
+
+                                {% endfor %}
+
+                            </ul>
+
+                        {% else %}
+
+                            <p>No payment requests received.</p>
+
+                        {% endif %}
+
+                    </div>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+{% endblock %}
+</div>
+</div>
+</div>
+</div>

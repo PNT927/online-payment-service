@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="fw-bold">Dashboard</h1>
+        <p class="text-light">Welcome back, {{ user.first_name }}</p>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+
+    <div class="col-md-4">
+        <div class="card dashboard-card h-100">
+            <div class="card-body">
+                <h5 class="mb-3">Current Balance</h5>
+                <div class="balance-amount">
+                    {{ account.balance }} {{ account.currency }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card dashboard-card h-100">
+            <div class="card-body">
+                <h5 class="mb-3">Account Information</h5>
+                <p class="mb-1"><strong>User:</strong> {{ user.username }}</p>
+                <p class="mb-1"><strong>Email:</strong> {{ user.email }}</p>
+                <p class="mb-0"><strong>Currency:</strong> {{ account.currency }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card dashboard-card h-100">
+            <div class="card-body">
+                <h5 class="mb-3">Notifications</h5>
+                <h2>{{ recent_notifications|length }}</h2>
+                <small>Recent account updates</small>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row g-4">
+
+    <div class="col-lg-6">
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4 class="section-title">Recent Notifications</h4>
+
+                {% if recent_notifications %}
+                    <ul class="list-group shadow-sm rounded-4 overflow-hidden">
+
+                        {% for n in recent_notifications %}
+                            <li class="list-group-item">
+                                <div class="fw-semibold mb-1">
+                                    {{ n.message }}
+                                </div>
+
+                                <small>
+                                    {{ n.created_at }}
+                                </small>
+                            </li>
+                        {% endfor %}
+
+                    </ul>
+                {% else %}
+                    <p>No notifications yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+
+                <h4 class="section-title">Recent Sent Payments</h4>
+
+                {% if recent_sent %}
+                    <ul class="list-group shadow-sm rounded-4 overflow-hidden">
+                        {% for t in recent_sent %}
+                            <li class="list-group-item">
+                                <div class="fw-semibold">
+                                    Sent to {{ t.recipient.username }}
+                                </div>
+                                <div>
+                                    {{ t.amount_sent }} {{ t.sender_currency }}
+                                </div>
+                                <small>
+                                    {{ t.created_at }}
+                                </small>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No sent payments yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4 class="section-title">Payment Requests Received</h4>
+                {% if recent_requests_received %}
+                    <ul class="list-group shadow-sm rounded-4 overflow-hidden">
+                        {% for r in recent_requests_received %}
+                            <li class="list-group-item">
+                                <div class="fw-semibold">
+                                    {{ r.requester.username }}
+                                </div>
+                                <div>
+                                    Requested {{ r.amount }} {{ r.currency }}
+                                </div>
+                                <small>
+                                    Status: {{ r.status }}
+                                </small>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No incoming payment requests.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h4 class="section-title">Recent Received Payments</h4>
+                {% if recent_received %}
+                    <ul class="list-group shadow-sm rounded-4 overflow-hidden">
+                        {% for t in recent_received %}
+                            <li class="list-group-item">
+                                <div class="fw-semibold">
+                                    From {{ t.sender.username }}
+                                </div>
+                                <div>
+                                    {{ t.amount_received }} {{ t.recipient_currency }}
+                                </div>
+                                <small>
+                                    {{ t.created_at }}
+                                </small>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No received payments yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="row g-4 mt-4">
+
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="section-title">Payment Activity</h4>
+                <canvas id="paymentChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="section-title">Request Status</h4>
+                <canvas id="requestChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const paymentChart = document.getElementById('paymentChart');
+    new Chart(paymentChart, {
+        type: 'doughnut',
+        data: {
+            labels: ['Sent Payments', 'Received Payments'],
+            datasets: [{
+                data: [{{ sent_count }}, {{ received_count }}],
+                backgroundColor: ['#ef4444', '#22c55e']
+            }]
+        }
+    });
+
+    const requestChart = document.getElementById('requestChart');
+    new Chart(requestChart, {
+        type: 'bar',
+        data: {
+            labels: ['Pending', 'Accepted', 'Rejected'],
+            datasets: [{
+                label: 'Requests',
+                data: [{{ pending_requests }}, {{ accepted_requests }}, {{ rejected_requests }}],
+                backgroundColor: ['#facc15', '#22c55e', '#ef4444']
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

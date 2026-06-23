@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}
+All Accounts
+{% endblock %}
+
+{% block content %}
+
+<h1 class="mb-2">User Accounts</h1>
+<p class="text-light mb-4">
+    All registered users and balances.
+</p>
+
+<div class="card">
+    <div class="card-body p-0">
+
+        <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle mb-0">
+
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Currency</th>
+                        <th>Balance</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for account in accounts %}
+                    <tr>
+                        <td>{{ account.user.username }}</td>
+                        <td>{{ account.user.email }}</td>
+                        <td>{{ account.currency }}</td>
+                        <td>{{ account.balance }}</td>
+                        <td>
+                            {% if account.user != request.user %}
+                                <a href="/staff/delete-user/{{ account.user.id }}/"
+                                   class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Delete this user?');">
+                                    Delete
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

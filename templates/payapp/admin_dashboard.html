@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Admin Dashboard
+{% endblock %}
+
+{% block content %}
+
+<h1 class="mb-2">Admin Dashboard</h1>
+<p class="text-light mb-4">
+    Welcome administrator {{ user.username }}.
+</p>
+
+<div class="row g-3">
+
+    <div class="col-md-4">
+        <a href="/staff/accounts/" class="text-decoration-none">
+            <div class="card dashboard-card h-100">
+                <div class="card-body">
+                    <h5 class="mb-1">User Accounts</h5>
+                    <small>View all registered users and balances.</small>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-4">
+        <a href="/staff/transactions/" class="text-decoration-none">
+            <div class="card dashboard-card h-100">
+                <div class="card-body">
+                    <h5 class="mb-1">Transactions</h5>
+                    <small>View all payments and requests.</small>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-4">
+        <a href="/staff/create-admin/" class="text-decoration-none">
+            <div class="card dashboard-card h-100">
+                <div class="card-body">
+                    <h5 class="mb-1">Create Admin</h5>
+                    <small>Register a new administrator.</small>
+                </div>
+            </div>
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

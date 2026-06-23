@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}
+All Transactions
+{% endblock %}
+
+{% block content %}
+
+<h1 class="mb-2">All Transactions</h1>
+<p class="text-light mb-4">
+    View completed payments and payment requests.
+</p>
+
+<div class="card mb-4">
+    <div class="card-body p-0">
+
+        <div class="p-3 pb-0">
+            <h4>Completed Payments</h4>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle mb-0">
+
+                <thead>
+                    <tr>
+                        <th>Sender</th>
+                        <th>Recipient</th>
+                        <th>Sent</th>
+                        <th>Received</th>
+                        <th>Rate</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for t in transactions %}
+                    <tr>
+                        <td>{{ t.sender.email }}</td>
+                        <td>{{ t.recipient.email }}</td>
+                        <td>{{ t.amount_sent }} {{ t.sender_currency }}</td>
+                        <td>{{ t.amount_received }} {{ t.recipient_currency }}</td>
+                        <td>{{ t.exchange_rate }}</td>
+                        <td>{{ t.transaction_type }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+
+        <div class="p-3 pb-0">
+            <h4>Payment Requests</h4>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle mb-0">
+
+                <thead>
+                    <tr>
+                        <th>Requester</th>
+                        <th>Target</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for r in requests %}
+                    <tr>
+                        <td>{{ r.requester.email }}</td>
+                        <td>{{ r.target_user.email }}</td>
+                        <td>{{ r.amount }} {{ r.currency }}</td>
+
+                        <td>
+                            {% if r.status == "ACCEPTED" %}
+                                <span class="badge bg-success">
+                                    {{ r.status }}
+                                </span>
+
+                            {% elif r.status == "REJECTED" %}
+                                <span class="badge bg-danger">
+                                    {{ r.status }}
+                                </span>
+
+                            {% else %}
+                                <span class="badge bg-warning text-dark">
+                                    {{ r.status }}
+                                </span>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
