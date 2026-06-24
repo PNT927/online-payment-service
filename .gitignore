@@ -9,3 +9,5 @@ db.sqlite3
 webapps.db
 *.crt
 *.key
+Accounts.txt
+WebAppsReport.pdf
