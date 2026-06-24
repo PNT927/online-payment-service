@@ -1,105 +1,115 @@
 # Online Payment Service
 
-## Overview
+A full-stack web application developed using Django that allows users to securely send and request payments through a web-based interface. The system includes user account management, transaction tracking, notifications, administrative tools, and a REST API for currency conversion.
 
-This project was developed as part of the Web Applications and Services module at the University of Sussex.
+This project was developed as part of a university module and was later extended with PostgreSQL, Docker, environment variable configuration, and AWS deployment experience.
 
-The aim of the project was to create a secure online payment service where users can send payments, request payments from other users, and manage their accounts through a web-based interface. The application was built using Django and PostgreSQL and follows a multi-layered architecture consisting of presentation, business logic, data access, security, and web service layers.
+## Tech Stack
 
-## Features
+* Python
+* Django
+* PostgreSQL
+* Docker & Docker Compose
+* HTML
+* CSS
+* Bootstrap
+* JavaScript
+* AWS EC2
+
+## Key Features
 
 ### User Features
 
-* User registration and login
-* Dashboard showing account balance and notifications
+* User registration and authentication
+* Secure login and logout
+* Dashboard displaying account balance and notifications
 * Send payments to other users
 * Request payments from other users
 * View transaction history
-* Profile page displaying account information
+* Manage account information
 
 ### Administrator Features
 
-* View all user accounts
-* View all transactions
+* View and manage user accounts
+* Monitor all transactions
 * Create administrator accounts
 * Delete user accounts
 
 ### Security Features
 
-* User authentication using Django Authentication
+* Django Authentication system
 * Password hashing
 * CSRF protection
 * XSS protection
-* SQL injection protection through Django ORM
+* SQL injection prevention through Django ORM
 * HTTPS support using SSL certificates
 
-### Web Services
+### API Features
 
 * REST API for currency conversion
-* JSON responses
-* Support for multiple currencies
-
-## Technologies Used
-
-* Python
-* Django
-* PostgreSQL
-* Docker
-* HTML
-* CSS
-* Bootstrap
-* JavaScript
+* JSON-based responses
+* Multi-currency support
 
 ## Database
 
-The application uses PostgreSQL to store account information, transactions, payment requests and notifications.
+The application uses PostgreSQL to store:
+
+* User accounts
+* Transactions
+* Payment requests
+* Notifications
 
 ## Docker Support
 
-The application has been containerised using Docker and Docker Compose. This allows the application and database to be started with a single command.
+The application has been containerised using Docker and Docker Compose, allowing both the Django application and PostgreSQL database to be started using a single command.
 
 ## Running the Project
 
-1. Clone the repository
+Clone the repository:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/PNT927/online-payment-service.git
 ```
 
-2. Navigate to the project folder
+Navigate to the project directory:
 
 ```bash
-cd webapps2026
+cd online-payment-service
 ```
 
-3. Install requirements
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Run migrations
+Apply migrations:
 
 ```bash
 python manage.py migrate
 ```
 
-5. Start the development server
+Start the development server:
 
 ```bash
 python manage.py runserver
 ```
 
-6. Open the application
+Open the application:
 
 ```text
 http://127.0.0.1:8000
 ```
 
+## Future Improvements
+
+* Email notifications for payment requests and transactions
+* Improved user interface and responsive design
+* Additional API endpoints
+* Automated testing and CI/CD pipeline
+
 ## Author
 
 Philip Tagoe Jr
 
-University of Sussex
 
-Computer Science
