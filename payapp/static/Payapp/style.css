@@ -3,10 +3,9 @@ body {
     color: #f3f4f6;
     min-height: 100vh;
 }
-
 .navbar {
     background-color: #1f2937 !important;
-    border-bottom: 100px solid #374151;
+    border-bottom: 1px solid #374151;
 }
 
 .navbar-brand {
