@@ -1,115 +1,197 @@
 # Online Payment Service
 
-A full-stack web application developed using Django that allows users to securely send and request payments through a web-based interface. The system includes user account management, transaction tracking, notifications, administrative tools, and a REST API for currency conversion.
+A Django-based web application demonstrating account management, peer-to-peer payments, payment requests, transaction tracking and administrator functionality, supported by a PostgreSQL database.
 
-This project was developed as part of a university module and was later extended with PostgreSQL, Docker, environment variable configuration, and AWS deployment experience.
+Developed as part of the **Web Applications and Services** module at the University of Sussex, and subsequently extended with Docker and PostgreSQL.
 
-## Tech Stack
+## Overview
 
-* Python
-* Django
-* PostgreSQL
-* Docker & Docker Compose
-* HTML
-* CSS
-* Bootstrap
-* JavaScript
-* AWS EC2
+The Online Payment Service is an educational project designed to demonstrate how a web application can manage users, account balances and transactions.
 
-## Key Features
+The application uses Django for backend logic and authentication, PostgreSQL for persistent data storage, and Bootstrap for its responsive interface. Docker Compose runs the Django application and PostgreSQL database as separate, connected containers.
 
-### User Features
+**Note:** This is a demonstration using application-managed balances, not a production payment platform or an integration with real banking services.
 
-* User registration and authentication
-* Secure login and logout
-* Dashboard displaying account balance and notifications
-* Send payments to other users
-* Request payments from other users
-* View transaction history
-* Manage account information
+## Features
 
-### Administrator Features
+### User functionality
 
-* View and manage user accounts
-* Monitor all transactions
-* Create administrator accounts
-* Delete user accounts
+- User registration and authentication
+- Account dashboard displaying balances and notifications
+- Send payments to other registered users
+- Request payments from other users
+- View sent and received transactions
+- Filter transaction history
+- View account information and payment activity
 
-### Security Features
+### Administrator functionality
 
-* Django Authentication system
-* Password hashing
-* CSRF protection
-* XSS protection
-* SQL injection prevention through Django ORM
-* HTTPS support using SSL certificates
+- Administrator dashboard
+- View registered accounts and balances
+- View transactions and payment requests
+- Create administrator accounts
+- Account management functionality
 
-### API Features
+### Currency conversion API
 
-* REST API for currency conversion
-* JSON-based responses
-* Multi-currency support
+- HTTP GET endpoint supporting GBP, USD and EUR
+- Calculations using Python's `Decimal` type
+- JSON responses
+- Validation of currency codes and amounts
+- Error responses for invalid requests
 
-## Database
+**Exchange rates are predefined for demonstration purposes, not live market rates.**
 
-The application uses PostgreSQL to store:
+## Application Screenshots
 
-* User accounts
-* Transactions
-* Payment requests
-* Notifications
+### User Dashboard
 
-## Docker Support
+![User Dashboard](screenshots/dashboard.png)
 
-The application has been containerised using Docker and Docker Compose, allowing both the Django application and PostgreSQL database to be started using a single command.
+### Send Payment
 
-## Running the Project
+![Send Payment](screenshots/send-payment.png)
 
-Clone the repository:
+### Request Payment
+
+![Request Payment](screenshots/request-payment.png)
+
+### Transaction History
+
+![Transaction History](screenshots/transaction-history.png)
+
+### Administrator Dashboard
+
+![Administrator Dashboard](screenshots/admin-dashboard.png)
+
+## Technology Stack
+
+| Component | Technology |
+|---|---|
+| Backend | Python 3.12, Django 6.0.4 |
+| Database | PostgreSQL 16 |
+| Frontend | HTML, CSS, JavaScript, Bootstrap 5 |
+| Database integration | Django ORM, psycopg2 |
+| Forms | django-crispy-forms |
+| Configuration | python-decouple |
+| Containerisation | Docker, Docker Compose |
+| API responses | Django JsonResponse |
+
+## Project Structure
+
+```text
+webapps2026/
+├── conversionapi/       # Currency conversion API
+├── payapp/              # Payment and account functionality
+├── register/            # Registration and authentication
+├── templates/           # Django HTML templates
+├── webapps2026/         # Django project configuration
+├── screenshots/         # Application screenshots
+├── manage.py
+├── requirements.txt
+├── Dockerfile
+├── docker-compose.yml
+├── .env.example
+└── README.md
+```
+
+## Running the Application with Docker
+
+### Prerequisites
+
+- Git
+- Docker Desktop (or Docker Engine with Docker Compose)
+
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/PNT927/online-payment-service.git
-```
-
-Navigate to the project directory:
-
-```bash
 cd online-payment-service
 ```
 
-Install dependencies:
+### 2. Configure environment variables
+
+Copy the example configuration:
 
 ```bash
-pip install -r requirements.txt
+cp .env.example .env
 ```
 
-Apply migrations:
+Open `.env` and replace `replace_with_your_development_password` with a password of your choice. Keep `.env` private: it is excluded from Git. The Django service connects to the database using the Compose service hostname `db`.
+
+**Existing local installations:** If you already have a PostgreSQL Docker volume, keep the original database password in `.env`; changing the environment variable alone does not change the password of an existing database user.
+
+### 3. Build and start the containers
 
 ```bash
-python manage.py migrate
+docker compose up --build -d
 ```
 
-Start the development server:
+### 4. Apply database migrations
 
 ```bash
-python manage.py runserver
+docker compose exec web python manage.py migrate
 ```
 
-Open the application:
+### 5. Open the application
+
+Visit [http://127.0.0.1:8000/](http://127.0.0.1:8000/) and register an account to explore the application.
+
+The application uses port `8000`. The Docker Compose configuration also exposes PostgreSQL on host port `5433` for local development.
+
+### 6. Stop the containers
+
+```bash
+docker compose down
+```
+
+Database data is retained in a Docker named volume. **Do not use `docker compose down -v` if you want to preserve that data.**
+
+## Currency Conversion API
+
+**Method:** `GET`
+
+**Endpoint:**
 
 ```text
-http://127.0.0.1:8000
+/webapps2026/conversion/<source>/<destination>/<amount>/
 ```
 
-## Future Improvements
+**Example request:**
 
-* Email notifications for payment requests and transactions
-* Improved user interface and responsive design
-* Additional API endpoints
-* Automated testing and CI/CD pipeline
+```text
+http://127.0.0.1:8000/webapps2026/conversion/GBP/USD/100/
+```
+
+**Example JSON response:**
+
+```json
+{
+  "from_currency": "GBP",
+  "to_currency": "USD",
+  "rate": "1.25",
+  "converted_amount": "125.00"
+}
+```
+
+The endpoint supports GBP, USD and EUR and returns HTTP 400 for invalid amounts or unsupported currencies and HTTP 405 for methods other than GET. The exchange rates are fixed demonstration values.
+
+## Security Considerations
+
+The application uses Django's built-in authentication, password hashing, CSRF protection and ORM-based database access. Local environment configuration and private keys should not be committed to version control.
+
+This project runs Django's development server and is intended for local demonstration. It has not been security-audited or configured for production financial transactions.
+
+## Limitations and Future Improvements
+
+- Replace predefined exchange rates with a maintained exchange-rate data source
+- Expand automated testing for payments, authentication and permissions
+- Improve error handling and validation
+- Introduce production-ready deployment configuration
+- Strengthen secret management and environment separation
+- Expand transaction reporting and account analytics
 
 ## Author
 
-Philip Tagoe Jr
-
+**Philip Tagoe Jr**  
 

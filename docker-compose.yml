@@ -7,7 +7,7 @@ services:
     environment:
       - POSTGRES_DB=webapps2026_db
       - POSTGRES_USER=webapps2026_user
-      - POSTGRES_PASSWORD=webapps2026_password
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_HOST=db
       - POSTGRES_PORT=5432
     depends_on:
@@ -19,7 +19,7 @@ services:
     environment:
       - POSTGRES_DB=webapps2026_db
       - POSTGRES_USER=webapps2026_user
-      - POSTGRES_PASSWORD=webapps2026_password
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
       - "5433:5432"
     volumes:
